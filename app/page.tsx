@@ -16,9 +16,9 @@ export default function Home() {
   const [input, setInput] = useState('');
 
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(input);
-  },[input])
+  }, [input])
 
   const AddTodo = () => {
     console.log(input);
@@ -40,8 +40,23 @@ export default function Home() {
 
   return (
     <main className="w-screen flex items-center justify-center">
-      <div className="flex flex-col justify-center">
-        <text className="text-4xl font-bold">오늘의 할일</text>
+      <div className="flex flex-col justify-center bg-slate-300">
+
+        <text className="text">오늘의 할일을 작성하세요.</text>
+        <div className="flex flex-row justify-center">
+          <input
+            className="input"
+            placeholder="입력하세요..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button
+            className="btn btn-normal"
+            onClick={AddTodo}
+          >
+            Add
+          </button>
+        </div>
         <div className="mt-4 flex flex-col justify-center">
           <div className="to-do">
             {todos.map((todo) => (
@@ -50,20 +65,6 @@ export default function Home() {
                 {todo.date} - {todo.text}
               </div>
             ))}
-          </div>
-          <div className="flex flex-col justify-center">
-            <input
-              className="border-4"
-              placeholder="입력하세요..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg px-4 py-2"
-              onClick={AddTodo}
-            >
-              Add
-            </button>
           </div>
         </div>
       </div>

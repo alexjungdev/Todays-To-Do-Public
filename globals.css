@@ -8,7 +8,7 @@
   }
 
   header {
-    @apply mb-10;
+    @apply mb-10 bg-gradient-to-r from-blue-400 to-cyan-500 border;
   }
 
   button {
@@ -31,7 +31,7 @@
   }
 
   .btn-normal {
-    @apply  text-white bg-gradient-to-r from-green-400 to-green-500 border border-black;
+    @apply  text-white bg-gradient-to-r from-blue-400 to-cyan-500 border border-white;
   }
 
   .btn-warning {
@@ -40,5 +40,9 @@
 
   .to-do {
     @apply w-96 h-96 bg-slate-600;
+  }
+
+  .input {
+    @apply w-2/3 mr-4 border-4;
   }
 }
