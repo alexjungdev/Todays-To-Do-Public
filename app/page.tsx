@@ -43,7 +43,7 @@ export default function Home() {
       <div className="flex flex-col justify-center">
         <text className="text-4xl font-bold">오늘의 할일</text>
         <div className="mt-4 flex flex-col justify-center">
-          <div className="h-96 bg-slate-600">
+          <div className="to-do">
             {todos.map((todo) => (
               // map over the todos from the state
               <div key={todo.id} className="border p-2 mt-4 bg-red-100">

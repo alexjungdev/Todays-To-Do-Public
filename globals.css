@@ -37,4 +37,8 @@
   .btn-warning {
     @apply  text-white bg-red-600 border border-black;
   }
+
+  .to-do {
+    @apply w-96 h-96 bg-slate-600;
+  }
 }
