@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Poor_Story} from "next/font/google";
+import { Poor_Story } from "next/font/google";
 import Header from "../components/header";
+import { DragDropContext } from "react-beautiful-dnd";
 import "../globals.css";
 
-const inter = Poor_Story({ 
+const inter = Poor_Story({
   subsets: ["latin"],
   weight: ["400"]
 });
@@ -22,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        {children}
+          {children}
       </body>
     </html>
   );

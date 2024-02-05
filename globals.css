@@ -27,7 +27,7 @@
   }
 
   .grid-container {
-    @apply container flex flex-col justify-center rounded-xl shadow-2xl bg-slate-100;
+    @apply container flex flex-col w-4/5 justify-center items-center rounded-xl shadow-2xl bg-slate-100;
   }
 
   .btn {
@@ -39,15 +39,15 @@
   }
 
   .btn-warning {
-    @apply  text-white bg-red-600 border border-black;
+    @apply  text-white bg-red-600 rounded-md;
   }
 
   .to-do {
-    @apply flex flex-col min-w-16 min-h-52;
+    @apply flex flex-col justify-start items-center content-center w-11/12 min-h-52;
   }
 
   .to-do-item {
-    @apply flex border p-2 mt-4 rounded-lg shadow-xl;
+    @apply flex border w-full border-gray-400  p-2 mt-4 rounded-lg shadow-xl break-all;
   }
 
   .input {
