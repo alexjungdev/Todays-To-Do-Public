@@ -7,8 +7,16 @@
      background-color: white;
   }
 
+  header {
+    @apply mb-10;
+  }
+
   button {
     @apply hover:scale-110 transition-all duration-75;
+  }
+
+  text {
+    @apply select-none;
   }
 }
 
@@ -23,7 +31,7 @@
   }
 
   .btn-normal {
-    @apply  text-black bg-white border border-black;
+    @apply  text-white bg-gradient-to-r from-green-400 to-green-500 border border-black;
   }
 
   .btn-warning {
