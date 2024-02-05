@@ -16,58 +16,77 @@ export default function Home() {
   const [input, setInput] = useState('');
 
 
-  useEffect(() => {
-    console.log(input);
-  }, [input])
+
 
   const AddTodo = () => {
-    console.log(input);
     if (input) {
-      // if the input is not empty
       setTodos([
-        // update the todo list with the new todo
         ...todos,
         {
-          id: Math.random().toString(), // generate a random id for the new todo
-          date: new Date().toLocaleDateString(), // use the current date as the date of the new todo
-          text: input, // use the input value as the text of the new todo
-          completed: false, // set the completed status of the new todo to false
+          id: Math.random().toString(), // id of to-do (need for mongoDB to save / not sure yet)
+          date: new Date().toLocaleDateString(), // date of to-do
+          text: input, // content of to-do
+          completed: false, // if this to-do is completed
         },
       ]);
-      setInput(""); // reset the input value
+      setInput("");
     }
   }
 
-  return (
-    <main className="w-screen flex items-center justify-center">
-      <div className="flex flex-col justify-center bg-slate-300">
+  const ToggleCheck = (id: string) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        return { 
+          ...todo, completed: !todo.completed
+        };
+      }
+      return todo;
+    });
+    setTodos(newTodos);
+  }
 
-        <text className="text">오늘의 할일을 작성하세요.</text>
-        <div className="flex flex-row justify-center">
-          <input
-            className="input"
-            placeholder="입력하세요..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button
-            className="btn btn-normal"
-            onClick={AddTodo}
-          >
-            Add
-          </button>
-        </div>
-        <div className="mt-4 flex flex-col justify-center">
-          <div className="to-do">
-            {todos.map((todo) => (
-              // map over the todos from the state
-              <div key={todo.id} className="border p-2 mt-4 bg-red-100">
-                {todo.date} - {todo.text}
-              </div>
-            ))}
+  return (
+    <main className="w-screen">
+      <text className="text">할일</text>
+      <div className="flex flex-row justify-center bg-yellow-100">
+        <div className="grid-container">
+          <div className="flex flex-col items-center justify-center mt-5">
+            <text className="text">오늘의 할일을 작성하세요.</text>
+            <div className="flex flex-row justify-center">
+              <input
+                className="input"
+                placeholder="입력하세요..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <button
+                className="btn btn-normal"
+                onClick={AddTodo}
+              >
+                Add
+              </button>
+            </div>
+          </div>
+          <div className="mt-8 flex flex-col justify-center min-w-24 min-h-52 flex-grow">
+            <div className="to-do">
+              {todos.map((todo) => (
+                <div key={todo.id} className="to-do-item">
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onClick={()=>ToggleCheck(todo.id)}
+                    className="mr-2"
+                  />
+                  <text>
+                    {todo.text}
+                  </text>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
     </main>
   );
 }
