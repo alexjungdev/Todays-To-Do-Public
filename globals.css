@@ -18,12 +18,31 @@
   text {
     @apply select-none;
   }
+
 }
 
 
 @layer utilities {
+  .auth {
+    @apply flex flex-row justify-center items-center mx-auto px-4;
+  }
+  .auth-title {
+    @apply sm:mt-0 xs:mt-1 s:mt-1.5 md:mt-2 lg:mt-5 xl:mt-10;
+  }
+  .auth-content {
+    @apply sm:mt-0 xs:mt-1 s:mt-1.5 md:mt-2 lg:mt-3 xl:mt-6;
+  }
+
   .text-balance { 
     text-wrap: balance;
+  }
+
+  .text-large {
+    @apply sm:text-xs xs:text-s s:text-2xl md:text-4xl lg:text-5xl xl:text-6xl;
+  }
+
+  .text-small {
+    @apply sm:text-sm xs:text-xs s:text-s md:text-base lg:text-lg xl:text-xl;
   }
 
   .grid-container {

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Poor_Story } from "next/font/google";
+import { Gothic_A1} from "next/font/google";
 import Header from "../components/header";
-import { DragDropContext } from "react-beautiful-dnd";
+import AuthContextProvider from "@/components/auth";
+
 import "../globals.css";
 
-const inter = Poor_Story({
+const inter = Gothic_A1({
   subsets: ["latin"],
-  weight: ["400"]
+  weight: ["200"]
 });
 
 export const metadata: Metadata = {
@@ -22,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
+        <AuthContextProvider>
+          <Header />
           {children}
+        </AuthContextProvider>
       </body>
     </html>
   );
