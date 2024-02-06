@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Gothic_A1} from "next/font/google";
+import { Noto_Sans_KR} from "next/font/google";
 import Header from "../components/header";
 import AuthContextProvider from "@/components/auth";
 
 import "../globals.css";
 
-const inter = Gothic_A1({
+const inter = Noto_Sans_KR({
   subsets: ["latin"],
-  weight: ["200"]
+  weight: ["300"]
 });
 
 export const metadata: Metadata = {
