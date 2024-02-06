@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { list } from "postcss";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+
+import SignIn from "@/components/signin";
+import { UserAuth } from "@/components/auth";
 
 interface TodoList {
   date: string;
@@ -12,13 +15,13 @@ interface TodoList {
   completed: boolean;
 }
 
+
 export default function Home() {
 
   const [todos, setTodos] = useState<TodoList[]>([]);
   const [input, setInput] = useState('');
 
-
-
+  const { user, loading, guestMode, SignOut } = useContext(UserAuth);
 
   const AddTodo = () => {
     if (input) {
@@ -56,13 +59,12 @@ export default function Home() {
     setTodos(newTodos);
   }
 
-  const onDragEnd = (result:DropResult) => 
-  {
+  const onDragEnd = (result: DropResult) => {
     //console.log("res", result)
 
     const sourceOrderNo = result.source.index;
     const destinationOrderNo = result.destination?.index;
-    
+
     if (destinationOrderNo !== undefined) {
       setTodos((prevTodos) => {
         const updatedTodos = [...prevTodos];
@@ -74,6 +76,9 @@ export default function Home() {
 
   };
 
+  if (!user) {
+    return <SignIn/>;
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

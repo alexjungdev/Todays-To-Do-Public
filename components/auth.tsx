@@ -2,62 +2,75 @@
 
 import "../globals.css"
 
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { GoogleAuthProvider, signInWithPopup, signOut, User } from "firebase/auth";
 import firebaseAuth from "@/lib/firebase/fireAuth";
 import { createContext } from "react";
 
-import { RiKakaoTalkFill } from "react-icons/ri";
-import { FaGoogle } from "react-icons/fa";
-
-const UserAuth = createContext({
-    user: null,
-
+export const UserAuth = createContext({
+    user: null as User | null,
+    loading: false,
+    guestMode: false,
+    SignIn_Kakao: async () => { },
+    SignIn_Google: async () => { },
+    Skip_SignIn: async () => { },
+    SignOut: async () => { }
 });
 
-const SignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    const selected_user = await signInWithPopup(firebaseAuth, provider);
-
-    console.log(selected_user);
-}
 
 export default function AuthContextProvider({ children }: any) {
-    return (
-        <main className="flex w-screen h-screen justify-center items-center bg-gradient-to-r from-emerald-500 to-teal-500">
-            <div className="flex flex-col justify-start items-start w-11/12 h-11/12 bg-slate-50 rounded-xl shadow-2xl">
-                <div className="auth auth-title">
-                    <text className="text-large">
-                        오늘의 할일
-                    </text>
-                </div>
-                <div className="auth auth-content">
-                    <text className="text-small">
-                        오늘 해야할 일들을 계획하고 목표를 달성해보세요.
-                        <br />
-                        설치없이 간편하게 이용하실 수 있습니다.
-                    </text>
-                </div>
-                <div className="auth auth-container">
-                    <div className="auth auth-img-container">
-                        <img src="undraw_studying_re_deca.svg"/>
-                    </div>
-                    <div className="auth auth-btn-container">
-                        <button className="auth-btn yellow">
-                            <RiKakaoTalkFill size={10} color={"white"} className="auth-btn-icon" />
-                            <text className="text-small auth-btn-text font-bold tracking-tighter text-white">
-                                카카오톡으로 시작하기
-                            </text>
-                        </button>
-                        <button className="auth-btn red">
-                            <FaGoogle size={10} color={"white"} className="auth-btn-icon" />
-                            <text className="text-small auth-btn-text font-bold tracking-tighter text-white">
-                                구글로 시작하기
-                            </text>
-                        </button>
-                    </div>
-                </div>
 
-            </div>
-        </main>
-    );
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [guestMode, setGuestMode] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = firebaseAuth.onAuthStateChanged((authUser) => {
+            setUser(authUser);
+            setLoading(false);
+        });
+
+        // Cleanup function
+        return () => unsubscribe();
+    }, []);
+
+    const SignIn_Kakao = async () => {
+        //기본적으로 LocalStorage 데이터 사용
+        //if LocalStorage가 존재하지 않으면 Database에서 직접 Fetch
+    }
+
+    
+
+    const SignIn_Google = async () => {
+        //기본적으로 LocalStorage 데이터 사용
+        //if LocalStorage가 존재하지 않으면 Database에서 직접 Fetch
+        const provider = new GoogleAuthProvider();
+        try{
+            await signInWithPopup(firebaseAuth, provider);
+        }
+        catch(error){
+            throw error;
+
+        }
+    }
+
+    const Skip_SignIn = async () => {
+        //기본적으로 LocalStorage 데이터 사용
+    }
+
+    const SignOut = async () => {
+        signOut(firebaseAuth);
+    }
+
+    const values = {
+        user,
+        loading,
+        guestMode,
+        SignIn_Kakao,
+        SignIn_Google,
+        Skip_SignIn,
+        SignOut
+    }
+
+    return <UserAuth.Provider value={values}>{children}</UserAuth.Provider>;
 }

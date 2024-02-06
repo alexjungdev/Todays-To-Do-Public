@@ -28,6 +28,8 @@ const config: Config = {
       '4xl': '2.441rem',
       '5xl': '3.052rem',
       '6xl': '3.552rem',
+      '8xl': '4.252rem',
+
     },
     extend: {
       backgroundImage: {
