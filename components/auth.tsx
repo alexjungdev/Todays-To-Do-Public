@@ -50,17 +50,23 @@ export default function AuthContextProvider({ children }: any) {
         if (Kakao && !Kakao.isInitialized()) {
             Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
 
-            const redirectUri = `${location.origin}/auth`;
-            const scope = [
-                'profile_nickname',
-            ].join(",");
+            try {
+                const redirectUri = `${location.origin}/auth`;
+                const scope = [
+                    'profile_nickname',
+                ].join(",");
 
-            window.Kakao.Auth.authorize({
-                redirectUri,
-                scope,
-            });
-
-            const code = new URL(window.location.href).searchParams.get("code");
+                await window.Kakao.Auth.authorize({
+                    redirectUri,
+                    scope,
+                });
+            }
+            catch(error) {
+                throw error;
+            }
+            
+            const searchParams = new URLSearchParams(location.search);
+            const code = searchParams.get("code");
         }
 
     }
