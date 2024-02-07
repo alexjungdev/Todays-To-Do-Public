@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR} from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import Header from "../components/header";
 import AuthContextProvider from "@/components/auth";
 
@@ -22,6 +22,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>Today's To Do</title>
+        <script 
+        src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js" 
+        integrity={process.env.NEXT_PUBLIC_INTEGRITY_VALUE} 
+        crossOrigin="anonymous"></script>
+      </head>
       <body className={inter.className}>
         <AuthContextProvider>
           <Header />

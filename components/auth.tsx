@@ -9,6 +9,7 @@ import { createContext } from "react";
 
 export const UserAuth = createContext({
     user: null as User | null,
+    signInState: null,
     loading: false,
     guestMode: false,
     SignIn_Kakao: async () => { },
@@ -17,10 +18,17 @@ export const UserAuth = createContext({
     SignOut: async () => { }
 });
 
+declare global {
+    interface Window {
+        Kakao: any;
+    }
+}
+
 
 export default function AuthContextProvider({ children }: any) {
 
     const [user, setUser] = useState<User | null>(null);
+    const [signInState, setSigninState] = useState(null);
     const [loading, setLoading] = useState(true);
     const [guestMode, setGuestMode] = useState(false);
 
@@ -37,18 +45,36 @@ export default function AuthContextProvider({ children }: any) {
     const SignIn_Kakao = async () => {
         //기본적으로 LocalStorage 데이터 사용
         //if LocalStorage가 존재하지 않으면 Database에서 직접 Fetch
+
+        const Kakao = window.Kakao;
+        if (Kakao && !Kakao.isInitialized()) {
+            Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
+
+            const redirectUri = `${location.origin}/auth`;
+            const scope = [
+                'profile_nickname',
+            ].join(",");
+
+            window.Kakao.Auth.authorize({
+                redirectUri,
+                scope,
+            });
+
+            const code = new URL(window.location.href).searchParams.get("code");
+        }
+
     }
 
-    
+
 
     const SignIn_Google = async () => {
         //기본적으로 LocalStorage 데이터 사용
         //if LocalStorage가 존재하지 않으면 Database에서 직접 Fetch
         const provider = new GoogleAuthProvider();
-        try{
+        try {
             await signInWithPopup(firebaseAuth, provider);
         }
-        catch(error){
+        catch (error) {
             throw error;
 
         }
@@ -56,14 +82,27 @@ export default function AuthContextProvider({ children }: any) {
 
     const Skip_SignIn = async () => {
         //기본적으로 LocalStorage 데이터 사용
+        setGuestMode(true);
     }
 
     const SignOut = async () => {
-        signOut(firebaseAuth);
+        if (user) {
+            if (signInState === "google")
+                signOut(firebaseAuth);
+
+            else if (signInState === "kakao")
+                signOut(firebaseAuth);
+        }
+        else {
+            if (guestMode)
+                setGuestMode(false);
+        }
+
     }
 
     const values = {
         user,
+        signInState,
         loading,
         guestMode,
         SignIn_Kakao,

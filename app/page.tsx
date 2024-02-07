@@ -76,7 +76,7 @@ export default function Home() {
 
   };
 
-  if (!user) {
+  if (!user && !guestMode) {
     return <SignIn/>;
   }
 
@@ -86,8 +86,8 @@ export default function Home() {
         <div className="flex flex-row justify-center">
           <div className="grid-container">
             <div className="flex flex-col items-center justify-center mt-5 w-2/3">
-              <text className="text">오늘의 할일을 작성하세요.</text>
-              <div className="flex flex-row w-full justify-center">
+              <text className="text-small">오늘의 할일을 작성하세요.</text>
+              <div className="flex flex-row w-full justify-center items-center">
                 <input
                   className="input"
                   placeholder="입력하세요..."
@@ -98,7 +98,9 @@ export default function Home() {
                   className="btn btn-normal"
                   onClick={AddTodo}
                 >
-                  Add
+                  <text className="text-x-small">
+                    Add
+                  </text>
                 </button>
               </div>
             </div>
