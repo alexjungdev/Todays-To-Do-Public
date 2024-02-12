@@ -104,6 +104,7 @@ app.post("/", async (req, res) => { //1.Kakao에서 code 전달받기
       kakaoUser: {
         ...kakaoUser,
       },
+      firebaseToken,
     });
 });
 

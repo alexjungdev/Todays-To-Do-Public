@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect } from "react";
 import { UserAuth } from "@/components/auth";
 import { useContext } from "react";
 
@@ -7,7 +10,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { RotatingLines } from "react-loader-spinner";
 
 function SignIn() {
-    const { loading, SignIn_Kakao, SignIn_Google, Skip_SignIn } = useContext(UserAuth);
+    const { user,loading, SignIn_Kakao, SignIn_Google, Skip_SignIn } = useContext(UserAuth);
 
     return (
         <main className="flex w-screen h-screen justify-center items-center bg-gradient-to-r from-emerald-500 to-teal-500">
@@ -63,7 +66,7 @@ function SignIn() {
                             (
                                 <div className="auth-spinner">
                                     <RotatingLines
-                                    
+
                                         visible={true}
                                         width="64"
                                         strokeColor="green"

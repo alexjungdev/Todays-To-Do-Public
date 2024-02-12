@@ -4,12 +4,11 @@ import "../globals.css"
 
 import { useState, useEffect } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut, User } from "firebase/auth";
-import { firebaseauth as firebaseAuth, firestoreDB } from "@/lib/firebase/fireAuth";
+import { firebaseauth as firebaseAuth} from "@/lib/firebase/fireAuth";
 import { createContext } from "react";
 
 export const UserAuth = createContext({
-    user: null as User | string | null,
-    signInState: "",
+    user: null as User | null,
     loading: false,
     guestMode: false,
     SignIn_Kakao: async () => { },
@@ -26,21 +25,14 @@ declare global {
 
 export default function AuthContextProvider({ children }: any) {
 
-    const [user, setUser] = useState<User | string | null>(null);
-    const [signInState, setSigninState] = useState("");
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [guestMode, setGuestMode] = useState(false);
-
-    useEffect(() => {
-        console.log("User:" + user);
-    }, [user]);
 
     useEffect(() => {
         const unsubscribe = firebaseAuth.onAuthStateChanged((authUser) => {
             setUser(authUser);
             setLoading(false);
-
-            console.log(authUser);
         });
 
         // Cleanup function
@@ -75,7 +67,6 @@ export default function AuthContextProvider({ children }: any) {
         //if LocalStorage가 존재하지 않으면 Database에서 직접 Fetch
         const provider = new GoogleAuthProvider();
         try {
-            setSigninState("google");
             await signInWithPopup(firebaseAuth, provider);
         }
         catch (error) {
@@ -91,11 +82,7 @@ export default function AuthContextProvider({ children }: any) {
 
     const SignOut = async () => {
         if (user) {
-            if (signInState === "google")
-                signOut(firebaseAuth);
-
-            else if (signInState === "kakao")
-                signOut(firebaseAuth);
+            signOut(firebaseAuth);
         }
         else {
             if (guestMode)
@@ -106,7 +93,6 @@ export default function AuthContextProvider({ children }: any) {
 
     const values = {
         user,
-        signInState,
         loading,
         guestMode,
         SignIn_Kakao,
