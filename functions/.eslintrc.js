@@ -27,5 +27,10 @@ module.exports = {
   rules: {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
+    "linebreak-style": 0,
+    "indent": "off",
+    "spaced-comment": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "object-curly-spacing": "off",
   },
 };
