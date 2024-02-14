@@ -8,32 +8,51 @@ import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautif
 import SignIn from "@/components/signin";
 import { UserAuth } from "@/components/auth";
 
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import moment from "moment";
+import "moment/locale/ko";
+
 interface TodoList {
   date: string;
   id: string;
   text: string;
   completed: boolean;
 }
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 
 export default function Home() {
 
   const [todos, setTodos] = useState<TodoList[]>([]);
+  const [todosByDate, setTodosByDate] = useState<{ [date: string]: TodoList[] }>({});
   const [input, setInput] = useState('');
+
+  const [calenderValue, calenderOnChange] = useState<Value>(new Date());
+  const indexOfCalenderValue = moment(calenderValue?.toString()).format('YYYY-MM-DD');
 
   const { user, loading, guestMode, SignOut } = useContext(UserAuth);
 
+
+  useEffect(() => {
+    setTodos(todosByDate[indexOfCalenderValue] || []);
+    console.log(todosByDate);
+  }, [indexOfCalenderValue, todosByDate])
+
+
   const AddTodo = () => {
     if (input) {
-      setTodos([
-        ...todos,
-        {
-          id: Math.random().toString(), // id of to-do (need for mongoDB to save / not sure yet)
-          date: new Date().toLocaleDateString(), // date of to-do
-          text: input, // content of to-do
-          completed: false, // if this to-do is completed
-        },
-      ]);
+      const newTodo = {
+        id: Math.random().toString(),
+        date: indexOfCalenderValue,
+        text: input,
+        completed: false,
+      };
+      setTodosByDate(prev => ({
+        ...prev,
+        [indexOfCalenderValue]: [...(prev[indexOfCalenderValue] || []), newTodo],
+      }));
       setInput("");
     }
   }
@@ -50,9 +69,15 @@ export default function Home() {
   const ToggleCheck = (id: string) => {
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
-        return {
-          ...todo, completed: !todo.completed
-        };
+        const updatedTodo = { ...todo, completed: !todo.completed };
+
+        setTodosByDate((prev) => ({
+          ...prev,
+          [indexOfCalenderValue]: prev[indexOfCalenderValue]?.map((item) =>
+            item.id === id ? updatedTodo : item
+          ),
+        }));
+        return updatedTodo;
       }
       return todo;
     });
@@ -76,15 +101,39 @@ export default function Home() {
 
   };
 
+
   if (!user && !guestMode) {
-    return <SignIn/>;
+    return <SignIn />;
   }
+
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <main className="w-screen">
-        <div className="flex flex-row justify-center">
+        <div className="flex flex-col justify-center items-center">
+          <Calendar
+            key={Object.keys(todosByDate).join()}
+            className="react-calendar"
+            onChange={calenderOnChange}
+            value={calenderValue}
+            calendarType="gregory"
+            minDetail="month"
+            showNeighboringMonth={false}
+            tileContent={({ date }) => {
+              const tileDate = moment(date).format("YYYY-MM-DD");
+              const todosForDate = todosByDate[tileDate] || [];
+              const hasTodos = todosByDate[tileDate]?.length > 0; // Check if there are todos for this date
+              const hasCompletedTodos = todosForDate.some(todo => todo.completed);
+
+              return (
+                <span className={` ${hasTodos ? "visible" : "hidden"} ${hasCompletedTodos ? "text-green-700" : "text-red-700"} `}>
+                  ●
+                </span>
+              );
+            }}
+          />
           <div className="grid-container">
+            <text className="text-large font-bold">{indexOfCalenderValue?.toString()}</text>
             <div className="flex flex-col items-center justify-center mt-5 w-2/3">
               <text className="text-small">오늘의 할일을 작성하세요.</text>
               <div className="flex flex-row w-full justify-center items-center">
@@ -121,7 +170,7 @@ export default function Home() {
                                 <div className="flex justify-center items-center mr-2">
                                   <input
                                     type="checkbox"
-                                    checked={todo.completed}
+                                    defaultChecked={todo.completed}
                                     onClick={() => ToggleCheck(todo.id)}
                                     className="min-w-6 min-h-6"
                                   />

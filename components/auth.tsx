@@ -26,7 +26,7 @@ declare global {
 export default function AuthContextProvider({ children }: any) {
 
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [guestMode, setGuestMode] = useState(false);
 
     useEffect(() => {
