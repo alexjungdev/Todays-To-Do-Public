@@ -7,7 +7,11 @@ const nextConfig = {
         return [
           {
             source: '/api/auth',
-            destination: `${process.env.API_URL}`,
+            destination: `${process.env.API_URL_AUTH}`,
+          },
+          {
+            source: '/api/database',
+            destination: `${process.env.API_URL_DATABASE}`,
           },
         ];
       },

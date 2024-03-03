@@ -4,14 +4,17 @@ import Image from "next/image";
 import { list } from "postcss";
 import { useEffect, useState, useContext } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+import { getFirestore, addDoc, collection, getDocs } from "firebase/firestore";
 
 import SignIn from "@/components/signin";
 import { UserAuth } from "@/components/auth";
+import axios, { AxiosResponse } from "axios";
 
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import moment from "moment";
 import "moment/locale/ko";
+import { DiDlang } from "react-icons/di";
 
 interface TodoList {
   date: string;
@@ -34,17 +37,24 @@ export default function Home() {
 
   const { user, loading, guestMode, SignOut } = useContext(UserAuth);
 
+  const db = getFirestore();
 
   useEffect(() => {
     setTodos(todosByDate[indexOfCalenderValue] || []);
-    console.log(todosByDate);
+    saveDataToFirebase();
   }, [indexOfCalenderValue, todosByDate])
+
+  useEffect(()=>{
+    if(user){
+      loadDataFromFirebase();
+    }
+  },[user])
 
 
   const AddTodo = () => {
     if (input) {
       const newTodo = {
-        id: Math.random().toString(),
+        id: user?.uid || "guest",
         date: indexOfCalenderValue,
         text: input,
         completed: false,
@@ -64,6 +74,36 @@ export default function Home() {
       return todo.id !== id;
     })
     setTodos(newToDos);
+  }
+
+  //#region Deprecated
+  //const saveDataToFirebase = async()=>{
+    //const docRef = await addDoc(collection(db,{collection_name}),{
+    //  id: user?.email?.toString() || "guest",
+    //  todosByDate: todosByDate,
+    //});
+  //}
+
+  //const loadDataFromFirebase = async()=>{
+    //const snapShot = await getDocs(collection(db,{collection_name}));
+    //snapShot.forEach((doc)=>{
+    //  //setTodosByDate(doc.data().todosByDate);
+    //  console.log("date:"+doc.data().todosByDate);
+    //  console.log("id:"+doc.data().id);
+    //});
+  //}
+  //#endregion
+
+  const saveDataToFirebase = async()=>{
+    const id = user?.uid || "guest";
+    await axios.post(`api/database`, { id,todosByDate });
+  }
+
+  const loadDataFromFirebase = async()=>{
+    const id = user?.uid || "guest";
+
+    const fetched_data = await axios.get(`api/database`, {params:{id: id}});
+    setTodosByDate(fetched_data.data);
   }
 
   const ToggleCheck = (id: string) => {

@@ -41,7 +41,7 @@ export default function KakaoAuthLoading() {
 
     useEffect(() => {
         if(user!==null)
-        router.replace("/");
+            router.replace("/");
     }, [user]);
 
     useEffect(() => {
