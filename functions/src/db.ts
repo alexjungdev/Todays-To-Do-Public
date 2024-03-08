@@ -1,6 +1,6 @@
-import * as express from "express";
-import * as cors from "cors";
-import * as admin from "firebase-admin";
+import express from "express";
+import cors from "cors";
+import admin from "firebase-admin";
 
 const getAdmin = () => {
     const firebaseAdminSDK = JSON.parse(process.env.FIREBASE_ADMIN_SDK || "");
@@ -14,8 +14,8 @@ const getAdmin = () => {
   };
 
 const app = express();
-app.use(cors({ origin: true }));
-app.post("/", async (req, res) => {
+app.use(cors({ origin: ["https://todays-to-do.com"]}));
+app.post("/", async (req:any, res:any) => {
     const { id, todosByDate } = req.body;
     if (!id || id == "guest") {
         return res.status(400).json({
@@ -34,7 +34,7 @@ app.post("/", async (req, res) => {
 }
 );
 
-app.get("/", async (req, res) => {
+app.get("/", async (req:any, res:any) => {
     const {id} = req.query;
 
     const app = getAdmin();

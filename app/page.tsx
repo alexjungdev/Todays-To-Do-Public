@@ -1,7 +1,5 @@
 "use client"
 
-import Image from "next/image";
-import { list } from "postcss";
 import { useEffect, useState, useContext } from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { RotatingLines } from "react-loader-spinner";
@@ -13,9 +11,6 @@ import axios from "axios";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import moment from "moment";
-import "moment/locale/ko";
-import { json } from "node:stream/consumers";
-import { todo } from "node:test";
 
 interface TodoList {
   date: string;
@@ -36,22 +31,47 @@ export default function Home() {
   const [saveReady, setSaveReady] = useState(false);
 
   const [calenderValue, calenderOnChange] = useState<Value>(new Date());
-  const indexOfCalenderValue = moment(calenderValue?.toString()).format('YYYY-MM-DD');
 
-  const { user, loading, guestMode, SignOut } = useContext(UserAuth);
+  const { user, guestMode} = useContext(UserAuth);
+
+  const getIndexOfCalenderValue = (value: Value): string => {
+    if (value instanceof Date) {
+      return moment(value).format('YYYY-MM-DD');
+    } else if (Array.isArray(value) && value.length === 2 && value.every((v) => v instanceof Date || v === null)) {
+
+      const [startDate, endDate] = value;
+      const formattedStartDate = startDate ? moment(startDate).format('YYYY-MM-DD') : '';
+      const formattedEndDate = endDate ? moment(endDate).format('YYYY-MM-DD') : '';
+      return formattedStartDate + '-' + formattedEndDate;
+    } else {
+      // Handle other cases if necessary
+      return '';
+    }
+  };
+
+  const indexOfCalenderValue = getIndexOfCalenderValue(calenderValue);
+
 
   useEffect(() => {
     setTodos(todosByDate[indexOfCalenderValue] || []);
 
-    if (user && saveReady) {
-      const local_data = JSON.stringify(todosByDate, null, 3);
-      localStorage.setItem('my-to-do-list-user', local_data);
+    if(saveReady) {
+      if (user && user?.uid.includes("kakao")) {
+        const local_data = JSON.stringify(todosByDate, null, 3);
+        localStorage.setItem('my-to-do-list-kakao', local_data);
 
-      saveDataToFirebase();
-    }
-    else if (guestMode && saveReady) {
-      const local_data = JSON.stringify(todosByDate, null, 3);
-      localStorage.setItem('my-to-do-list-guest', local_data);
+        saveDataToFirebase();
+      }
+      else if (user && !user?.uid.includes("kakao")) {
+        const local_data = JSON.stringify(todosByDate, null, 3);
+        localStorage.setItem('my-to-do-list-google', local_data);
+
+        saveDataToFirebase();
+      }
+      else if (guestMode) {
+        const local_data = JSON.stringify(todosByDate, null, 3);
+        localStorage.setItem('my-to-do-list-guest', local_data);
+      }
     }
   }, [indexOfCalenderValue, todosByDate])
 
@@ -60,7 +80,13 @@ export default function Home() {
       setSaveReady(false);
     }
     else if (user) {
-      const my_data = localStorage.getItem('my-to-do-list-user');
+      let my_data;
+      if(user?.uid.includes("kakao")){
+       my_data = localStorage.getItem('my-to-do-list-kakao');
+      }
+      else if(!user?.uid.includes("kakao")){
+        my_data = localStorage.getItem('my-to-do-list-google');
+      }
 
       ResetTodo();
 
@@ -175,13 +201,13 @@ export default function Home() {
 
   const saveDataToFirebase = async () => {
     const id = user?.uid || "guest";
-    await axios.post(`api/database`, { id, todosByDate });
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL_DATABASE}`, { id, todosByDate });
   }
 
   const loadDataFromFirebase = async () => {
     const id = user?.uid || "guest";
 
-    const fetched_data = await axios.get(`api/database`, { params: { id: id } });
+    const fetched_data = await axios.get(`${process.env.NEXT_PUBLIC_API_URL_DATABASE}`, { params: { id: id } });
     setDataFetch(true);
     setTodosByDate(fetched_data.data);
   }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react";
+import Image from "next/image";
 import { UserAuth } from "@/components/auth";
 import { useContext } from "react";
 
@@ -10,7 +10,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { RotatingLines } from "react-loader-spinner";
 
 function SignIn() {
-    const { user,loading, SignIn_Kakao, SignIn_Google, Skip_SignIn } = useContext(UserAuth);
+    const { loading, SignIn_Kakao, SignIn_Google, Skip_SignIn } = useContext(UserAuth);
 
     return (
         <main className="flex w-screen h-screen justify-center items-center bg-gradient-to-r from-emerald-500 to-teal-500">
@@ -32,7 +32,7 @@ function SignIn() {
                 </div>
                 <div className="auth auth-container">
                     <div className="auth auth-img-container">
-                        <img src="undraw_studying_re_deca.svg" />
+                        <Image src="undraw_studying_re_deca.svg" alt="study_img" width={500} height={500}/>
                     </div>
                     <div className="auth auth-btn-container">
                         {!loading ? (

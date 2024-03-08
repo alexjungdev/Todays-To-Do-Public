@@ -1,7 +1,7 @@
-import * as express from "express";
-import * as cors from "cors";
-import * as admin from "firebase-admin";
-import { UserRecord } from "firebase-admin/lib/auth/user-record";
+import express from "express";
+import cors from "cors";
+import admin from "firebase-admin";
+import { UserRecord } from "firebase-admin/auth";
 
 import axios from "axios";
 import { config } from "dotenv";
@@ -81,8 +81,8 @@ const updateOrCreateUser = async (user: KakaoUser): Promise<UserRecord> => {
 };
 
 const app = express();
-app.use(cors({ origin: true }));//출시할때 origin은 특정 주소로 고정하기
-app.post("/", async (req, res) => { //1.Kakao에서 code 전달받기
+app.use(cors({ origin: ["https://todays-to-do.com"]}));//출시할때 origin은 특정 주소로 고정하기
+app.post("/", async (req:any, res:any) => { //1.Kakao에서 code 전달받기
   const { code } = req.body;
   if (!code) {
     return res.status(400).json({

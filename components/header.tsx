@@ -1,12 +1,10 @@
 "use client"
 
-import Link from "next/link";
 import "../globals.css"
 
 import { useContext, useEffect } from "react";
 import { IoIosLogOut } from "react-icons/io";
 
-import SignIn from "@/components/signin";
 import { UserAuth } from "@/components/auth";
 
 

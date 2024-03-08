@@ -1,7 +1,6 @@
 "use client"
 
-import Link from "next/link";
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { UserAuth } from "@/components/auth";
 import { signInWithCustomToken } from "firebase/auth";
@@ -42,13 +41,13 @@ export default function KakaoAuthLoading() {
     useEffect(() => {
         if(user!==null)
             router.replace("/");
-    }, [user]);
+    }, [router,user]);
 
     useEffect(() => {
         (async () => {
             try {
                 const code = new URL(window.location.href).searchParams.get('code');
-                const response: AxiosResponse<Auth> = await axios.post(`api/auth`, { code });
+                const response: AxiosResponse<Auth> = await axios.post(`${process.env.NEXT_PUBLIC_API_URL_AUTH}`, { code });
 
                 const { firebaseToken } = response.data;
 
